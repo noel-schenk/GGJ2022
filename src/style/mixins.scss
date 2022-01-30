@@ -1,0 +1,9 @@
+@mixin button($color) {
+  font-weight: bold;
+  font-size: 18px;
+  display: block;
+  background: var($color);
+  color: white;
+  padding: 20px 0;
+  cursor: pointer;
+}

@@ -1,0 +1,38 @@
+@use '../../style/mixins';
+
+.Menu {
+}
+
+.RoomId {
+  font-size: 10px;
+  font-weight: bold;
+  background: var(--color-celadon);
+  color: #414141;
+  display: block;
+  padding: 6px 0;
+}
+
+.CreateNewRoom {
+  @include mixins.button(--color-electric-blue);
+}
+
+.JoinGameLabel {
+  font-size: 10px;
+  font-weight: bold;
+  display: block;
+  padding: 12px 4px 4px 4px;
+  color: var(--color-mauve);
+  position: relative;
+  text-align: left;
+  border-top: 1px solid var(--color-mauve);
+}
+
+.JoinGame {
+  @include mixins.button(--color-pink-lavender);
+}
+
+.GameIdInput {
+  width: 100%;
+  border: none;
+  padding: 8px;
+}
