@@ -3,15 +3,6 @@
 .Menu {
 }
 
-.RoomId {
-  font-size: 10px;
-  font-weight: bold;
-  background: var(--color-celadon);
-  color: #414141;
-  display: block;
-  padding: 6px 0;
-}
-
 .CreateNewRoom {
   @include mixins.button(--color-electric-blue);
 }

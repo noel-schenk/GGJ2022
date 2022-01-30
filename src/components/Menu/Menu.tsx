@@ -9,8 +9,8 @@ const Menu: FC<MenuProps> = () => {
   const [gameId, setGameId] = useState<string>();
   const [roomReady, setRoomReady] = useState(false);
 
-  const createNewRoom = () => {
-    GameServer.Instance.joinOrCreateGame().then(() => {
+  const joinOrCreateGame = () => {
+    GameServer.Instance.joinOrCreateGame(gameId).then(() => {
       setRoomReady(true);
     });
   };
@@ -19,22 +19,17 @@ const Menu: FC<MenuProps> = () => {
     <Base />
   ) : (
     <div className={styles.Menu}>
-      {
-        <a className={styles.CreateNewRoom} onClick={createNewRoom}>
-          Create new Room
-        </a>
-      }
-      <span className={styles.JoinGameLabel}>OR join existing game</span>
       <input
         className={styles.GameIdInput}
-        placeholder="Enter game ID"
+        placeholder="Enter game ID to join room"
         onChange={(ev) => {
           setGameId(ev.currentTarget.value);
         }}
         type="text"
       ></input>
-      <a className={styles.JoinGame} onClick={() => GameServer.Instance.joinOrCreateGame(gameId)}>
-        Join
+      <a className={styles.JoinGame} onClick={() => joinOrCreateGame()}>
+        {gameId && 'Join Room'}
+        {!gameId && 'Create Room'}
       </a>
     </div>
   );

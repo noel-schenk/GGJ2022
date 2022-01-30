@@ -1,1 +1,28 @@
-.Lobby {}
+@use '../../style/mixins';
+
+.Lobby {
+}
+
+.RoomId {
+  font-size: 10px;
+  font-weight: bold;
+  background: var(--color-celadon);
+  color: #414141;
+  display: block;
+  padding: 6px 0;
+}
+
+.PlayerNameContainer {
+  padding: 8px;
+}
+
+.PlayerName {
+  display: block;
+  background: var(--color-pink-lavender);
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.StartGame {
+  @include mixins.button(--color-electric-blue);
+}
