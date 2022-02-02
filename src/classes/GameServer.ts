@@ -1,14 +1,16 @@
 import { Client, Room } from 'colyseus.js';
-import { Schema } from '@colyseus/schema';
+import { Schema, ArraySchema } from '@colyseus/schema';
 import { PlayerState, RoomState } from './Interfaces';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { LocalState } from './LocalState';
 
 export class GameServer {
   private static _GameServer: GameServer;
   client: Client;
+  clientId: string;
   room: Room;
-  roomState: BehaviorSubject<RoomState>;
-  player: PlayerState;
+  roomState: BehaviorSubject<RoomState>; // DO NOT SUBSCRIBE or use .value directly inside component use 'useBehaviorSubject()'
+  localState = new BehaviorSubject(new LocalState()); // DO NOT SUBSCRIBE or use .value directly inside component use 'useBehaviorSubject()'
 
   private constructor() {}
 
@@ -29,7 +31,6 @@ export class GameServer {
 
         room.onMessage('*', this.onMessage.bind(this));
         room.onStateChange((state) => {
-          console.log(state, 'onStateChange');
           this.roomState.next(state);
         });
       })
@@ -41,14 +42,19 @@ export class GameServer {
   }
 
   sendMessage(type: string | number, message: any) {
-    this.room.send(type, message);
+    setTimeout(() => {
+      this.room.send(type, message);
+    });
   }
 
   onMessage(type: string | number | Schema, message: any) {
     switch (type) {
-      case typeof PlayerState:
-        this.player = message;
-        break;
+      case 'client_id':
+        this.clientId = message;
     }
+  }
+
+  getCurrentPlayer(players: ArraySchema<PlayerState>) {
+    return players.find((player) => player.id === this.clientId);
   }
 }

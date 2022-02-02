@@ -1,9 +1,14 @@
 import { Room, Client } from 'colyseus';
-import { PlayerState, RoomState } from '../src/classes/Interfaces';
+import { Direction, EventMove, PlayerState, RoomState } from '../src/classes/Interfaces';
 import { Schema } from '@colyseus/schema';
+import { GameLoop } from './gameLoop';
+import { GameEvents } from './gameEvents';
+import { getActivePlayer } from './helper';
 
 export class BaseRoom extends Room<RoomState> {
   leader: Client;
+  gameLoop = new GameLoop(this);
+  gameEvents = new GameEvents(this);
 
   onCreate(options: any) {
     console.log('room created');
@@ -19,8 +24,20 @@ export class BaseRoom extends Room<RoomState> {
       console.log(client.sessionId, 'sent "view" message: ', message);
     });
 
+    this.onMessage('play', (client, message) => {
+      switch (message) {
+        case 'start':
+          this.gameLoop.onGameStart();
+          break;
+      }
+    });
+
+    this.onMessage('move', (client, message: EventMove) => {
+      this.gameEvents.onMove(message.direction, message.degree, client);
+    });
+
     this.onMessage('setName', (client, message) => {
-      const player = this.state.getCurrentPlayer(client.id);
+      const player = getActivePlayer(this, client);
       if (!player) return;
 
       player.name = message;
@@ -29,21 +46,7 @@ export class BaseRoom extends Room<RoomState> {
   }
 
   onJoin(client: Client, options: any, auth: any) {
-    console.log('client joint');
-
-    const isLeader = !this.leader;
-
-    isLeader && (this.leader = client);
-
-    const newPlayerState = new PlayerState();
-    newPlayerState.id = client.id;
-    isLeader && (newPlayerState.isLeader = true);
-
-    this.state.players.push(newPlayerState);
-
-    this.setState(this.state);
-
-    client.send(typeof PlayerState, newPlayerState);
+    this.gameLoop.onJoin(client);
   }
 
   onLeave(client: Client, consented: boolean) {

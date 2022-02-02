@@ -10,7 +10,6 @@ interface BaseProps {}
 const Base: FC<BaseProps> = () => {
   const roomState = useBehaviorSubject(GameServer.Instance.roomState);
 
-  console.log(roomState?.view, 'room?.state.view');
   switch (roomState?.view) {
     case Views.Game:
       return <GameView />;
